@@ -1,7 +1,8 @@
 # J1939 DM1 Calculator
 
-WordPress 在线工具插件，用于计算 `J1939 DM1 (PGN 0xFECA / 65226)` 的单帧和 `TP.BAM` 多包报文。  
-插件只生成 CAN 报文数据，不负责发送。
+WordPress 在线工具插件，用于计算 `J1939 DM1 (PGN 0xFECA / 65226)` 的单帧和 `TP.BAM` 多包报文。
+
+本插件仅在浏览器本地计算并生成 CAN 报文数据，不发送 CAN 报文、不连接 CAN 设备、不上传输入数据。启用自动更新后，WordPress 只会向 GitHub Release 检查版本和下载 zip。
 
 ## 功能
 
@@ -21,6 +22,17 @@ WordPress 在线工具插件，用于计算 `J1939 DM1 (PGN 0xFECA / 65226)` 的
 - 新增 `4 字节 DTC 原始字节解码`
 - 页面内错误状态提示，不再只依赖弹窗或控制台
 
+## 本地计算声明
+
+- 所有 DM1、TP.BAM、CAN ID 和 DTC 解码计算均在浏览器内完成。
+- 插件不提供 CAN 发送接口，不会写入总线，也不会连接任何硬件设备。
+- 表单输入、DTC 列表和计算结果不会提交到本站服务器或第三方服务。
+- 自动更新检查由 `Plugin Update Checker` 完成，只访问 GitHub Release 元数据和 Release zip。
+
+## 许可证
+
+本项目以 `GPL-2.0-or-later` 发布，仓库根目录包含 GNU General Public License v2.0 全文。
+
 ## 目录
 
 ```text
@@ -37,6 +49,17 @@ wordpress-dm1-calculator/
 
 1. 将 `wordpress-dm1-calculator/` 打包为 zip。
 2. WordPress 后台 -> 插件 -> 安装插件 -> 上传 zip -> 启用。
+
+## 自动更新
+
+插件内置 `Plugin Update Checker`，从 GitHub Release 检查更新。仓库 `main` 分支有普通提交时，GitHub Actions 会自动：
+
+- 递增插件补丁版本号
+- 提交版本号变更并附加 `[skip ci]`
+- 打包 `wordpress-dm1-calculator-{version}.zip`
+- 创建 `v{version}` GitHub Release 并上传 zip
+
+WordPress 后台检测到新 Release 后，会按普通插件更新流程提示升级。
 
 ## 校验结论
 

@@ -1,0 +1,66 @@
+name: Build Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wordpress-dm1-calculator-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify syntax and algorithm fixtures
+        run: |
+          php -l dm1-calculator.php
+          node --check assets/js/dm1-calculator.js
+          node scripts/verify-dm1.mjs
+
+      - name: Bump patch version
+        id: bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
+          CUR="$(grep -oP 'Version:\s*\K[0-9.]+' dm1-calculator.php | head -1)"
+          IFS=. read -r MAJ MIN PAT <<< "$CUR"
+          NEW="$MAJ.$MIN.$((PAT+1))"
+
+          sed -i "s/^ \* Version: $CUR/ * Version: $NEW/" dm1-calculator.php
+          sed -i "s/private const VERSION = '$CUR';/private const VERSION = '$NEW';/" dm1-calculator.php
+
+          git add dm1-calculator.php
+          git commit -m "chore: bump $CUR -> $NEW [skip ci]"
+          git push
+
+          echo "new_version=$NEW" >> "$GITHUB_OUTPUT"
+
+      - name: Build zip
+        id: build
+        run: |
+          ZIPPATH="$(bash scripts/build-release.sh '${{ steps.bump.outputs.new_version }}')"
+          echo "zippath=$ZIPPATH" >> "$GITHUB_OUTPUT"
+          echo "zipname=$(basename "$ZIPPATH")" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.new_version }}
+          ZIPPATH: ${{ steps.build.outputs.zippath }}
+        run: |
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --generate-notes \
+            "$ZIPPATH"

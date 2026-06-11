@@ -2,8 +2,9 @@
 /**
  * Plugin Name: J1939 DM1 Calculator
  * Plugin URI: https://github.com/AKCX2002/wordpress-dm1-calculator
- * Description: 在线计算 J1939 DM1(0xFECA) 单帧/TP.BAM 报文，仅生成报文数据不发送。支持标准与高低位交换 B3 位域对照，提供短代码 [dm1_calc] 和后台工具页。
- * Version: 0.2.1
+ * Update URI: https://github.com/AKCX2002/wordpress-dm1-calculator
+ * Description: 仅在浏览器本地计算 J1939 DM1(0xFECA) 单帧/TP.BAM 报文，不发送 CAN 报文、不上传输入数据。支持标准与高低位交换 B3 位域对照，提供短代码 [dm1_calc] 和后台工具页。
+ * Version: 0.2.2
  * Author: Babel36acl
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -15,13 +16,35 @@ if (!defined('ABSPATH')) {
 
 final class J1939_DM1_Calculator_Plugin {
     private const SLUG = 'j1939-dm1-calculator';
-    private const VERSION = '0.2.1';
+    private const VERSION = '0.2.2';
 
     public static function init(): void {
         add_shortcode('dm1_calc', [__CLASS__, 'render_shortcode']);
         add_action('admin_menu', [__CLASS__, 'register_admin_page']);
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_frontend_assets']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_admin_assets']);
+        add_action('plugins_loaded', [__CLASS__, 'init_updater']);
+    }
+
+    public static function init_updater(): void {
+        $library = __DIR__ . '/lib/plugin-update-checker.php';
+        if (!file_exists($library)) {
+            return;
+        }
+
+        require_once $library;
+
+        try {
+            $update_checker = \YahnisElsts\PluginUpdateChecker\v5p7\PucFactory::buildUpdateChecker(
+                'https://github.com/AKCX2002/wordpress-dm1-calculator/',
+                __FILE__,
+                'wordpress-dm1-calculator'
+            );
+            $update_checker->setBranch('main');
+            $update_checker->getVcsApi()->enableReleaseAssets('/wordpress-dm1-calculator-[0-9.]+\.zip($|[?&#])/i');
+        } catch (\Throwable $e) {
+            error_log('[J1939 DM1 Calculator] Updater init failed: ' . $e->getMessage());
+        }
     }
 
     public static function register_admin_page(): void {
@@ -110,7 +133,8 @@ final class J1939_DM1_Calculator_Plugin {
                     <p class="dm1calc__eyebrow">J1939 / DM1 / FECA</p>
                     <h2>在线校验 DM1 单帧与 TP.BAM 报文</h2>
                     <p class="dm1calc__desc">
-                        输入灯状态和 DTC，直接生成 J1939 DM1 报文数据。工具只计算，不发送。
+                        输入灯状态和 DTC，直接在浏览器本地生成 J1939 DM1 报文数据。
+                        工具不发送 CAN 报文、不上传输入数据；自动更新检查仅访问 GitHub Release 元数据。
                         同时提供 Byte3 (B3) 标准位域与「高低位交换」对照，方便联调排错。
                     </p>
                 </div>
@@ -132,6 +156,7 @@ final class J1939_DM1_Calculator_Plugin {
                                 <li>用途：广播当前激活故障码和四个诊断灯状态</li>
                                 <li>结构：前 2 字节灯状态，后续每 4 字节 1 条 DTC</li>
                                 <li>长度：原始有效载荷 ≤ 8 字节时走单帧，否则走 TP.BAM</li>
+                                <li>边界：仅本地计算，不连接 CAN 设备，不提交输入内容</li>
                             </ul>
                         </section>
                         <section class="dm1calc__info-card">
