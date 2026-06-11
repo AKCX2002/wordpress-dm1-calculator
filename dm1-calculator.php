@@ -3,7 +3,7 @@
  * Plugin Name: J1939 DM1 Calculator
  * Plugin URI: https://github.com/AKCX2002/wordpress-dm1-calculator
  * Description: 在线计算 J1939 DM1(0xFECA) 单帧/TP.BAM 报文，仅生成报文数据不发送。支持标准与高低位交换 B3 位域对照，提供短代码 [dm1_calc] 和后台工具页。
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: Babel36acl
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 
 final class J1939_DM1_Calculator_Plugin {
     private const SLUG = 'j1939-dm1-calculator';
-    private const VERSION = '0.2.0';
+    private const VERSION = '0.2.1';
 
     public static function init(): void {
         add_shortcode('dm1_calc', [__CLASS__, 'render_shortcode']);
@@ -107,11 +107,11 @@ final class J1939_DM1_Calculator_Plugin {
         <div class="dm1calc" data-dm1calc>
             <section class="dm1calc__hero">
                 <div class="dm1calc__hero-copy">
-                    <p class="dm1calc__eyebrow">J1939 · DM1 · FECA</p>
+                    <p class="dm1calc__eyebrow">J1939 / DM1 / FECA</p>
                     <h2>在线校验 DM1 单帧与 TP.BAM 报文</h2>
                     <p class="dm1calc__desc">
                         输入灯状态和 DTC，直接生成 J1939 DM1 报文数据。工具只计算，不发送。
-                        同时提供 Byte3(B3) 标准位域与“高低位交换”对照，方便联调排错。
+                        同时提供 Byte3 (B3) 标准位域与「高低位交换」对照，方便联调排错。
                     </p>
                 </div>
                 <div class="dm1calc__hero-note">
@@ -128,7 +128,7 @@ final class J1939_DM1_Calculator_Plugin {
                         <section class="dm1calc__info-card">
                             <h3>基本信息</h3>
                             <ul>
-                                <li>PGN：`0xFECA` / `65226`</li>
+                                <li>PGN：<code>0xFECA</code> / <code>65226</code></li>
                                 <li>用途：广播当前激活故障码和四个诊断灯状态</li>
                                 <li>结构：前 2 字节灯状态，后续每 4 字节 1 条 DTC</li>
                                 <li>长度：原始有效载荷 ≤ 8 字节时走单帧，否则走 TP.BAM</li>
@@ -137,11 +137,11 @@ final class J1939_DM1_Calculator_Plugin {
                         <section class="dm1calc__info-card">
                             <h3>DTC 编码</h3>
                             <ul>
-                                <li>`B1 = SPN[7:0]`</li>
-                                <li>`B2 = SPN[15:8]`</li>
-                                <li>标准模式：`B3 = SPN[18:16]@bit0..2 + FMI@bit3..7`</li>
-                                <li>交换模式：`B3 = SPN[18:16]@bit5..7 + FMI@bit0..4`</li>
-                                <li>`B4 = OC@bit0..6 + CM@bit7`</li>
+                                <li><code>B1 = SPN[7:0]</code></li>
+                                <li><code>B2 = SPN[15:8]</code></li>
+                                <li>标准模式：<code>B3 = SPN[18:16]@bit0..2 + FMI@bit3..7</code></li>
+                                <li>交换模式：<code>B3 = SPN[18:16]@bit5..7 + FMI@bit0..4</code></li>
+                                <li><code>B4 = OC@bit0..6 + CM@bit7</code></li>
                             </ul>
                         </section>
                         <section class="dm1calc__info-card">
@@ -154,16 +154,14 @@ final class J1939_DM1_Calculator_Plugin {
                         </section>
                     </div>
                     <div class="dm1calc__callout">
-                        常见误解：把标准模式里的 `SPN[18:16]` 和 `FMI` 位置对调，会把示例
-                        `SPN=1083, FMI=22` 错解成 `328763 / 16`。本工具会把两种模式并列显示。
+                        常见误解：把标准模式里的 <code>SPN[18:16]</code> 和 <code>FMI</code> 位置对调，会把示例
+                        <code>SPN=1083, FMI=22</code> 错解成 <code>328763 / 16</code>。本工具会把两种模式并列显示。
                     </div>
                 </div>
             </details>
 
             <div class="dm1calc__grid">
-                <section class="dm1calc__card dm1calc__card--wide">
-                    <div class="dm1calc__status" data-status hidden></div>
-                </section>
+                <div class="dm1calc__status dm1calc__card--wide" data-status hidden></div>
 
                 <section class="dm1calc__card">
                     <h3>基本参数</h3>
@@ -203,7 +201,7 @@ final class J1939_DM1_Calculator_Plugin {
                 <section class="dm1calc__card dm1calc__card--wide">
                     <div class="dm1calc__section-head">
                         <h3>DTC 列表</h3>
-                        <p>支持输入十进制或 `0x` 十六进制，支持 `SPN1083` / `FMI=22` 前缀格式。</p>
+                        <p>支持输入十进制或 <code>0x</code> 十六进制，支持 <code>SPN1083</code> / <code>FMI=22</code> 前缀格式。</p>
                     </div>
 
                     <div class="dm1calc__row dm1calc__row--inputs">
@@ -251,8 +249,8 @@ final class J1939_DM1_Calculator_Plugin {
                         <summary>批量导入</summary>
                         <div class="dm1calc__details-body">
                             <p class="dm1calc__hint">
-                                每行一条：`SPN,FMI,OC[,CM]` 或 `SPN:FMI:OC[:CM]`。也支持 JSON：
-                                `[{"spn":1083,"fmi":22,"oc":1}]` 或 `{"dtcs":[...]}`。
+                                每行一条：<code>SPN,FMI,OC[,CM]</code> 或 <code>SPN:FMI:OC[:CM]</code>。也支持 JSON：
+                                <code>[{"spn":1083,"fmi":22,"oc":1}]</code> 或 <code>{"dtcs":[...]}</code>。
                             </p>
                             <textarea rows="6" data-import></textarea>
                             <div class="dm1calc__row dm1calc__row--actions">

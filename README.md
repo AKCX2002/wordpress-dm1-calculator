@@ -64,7 +64,7 @@ verify-dm1: OK
 
 ## UI 方向
 
-UI 沿用你当前站点的 Arcaea / Sakurairo 视觉语言，使用深色玻璃卡片、冰蓝高光和移动端可读布局，不再把大段 CSS/JS 内联塞进单个 PHP 文件。
+UI 按 `sakurairo-arcaea-blog-skill` 的 Arcaea 规则重整：使用 scoped `--arcaea-*` token、低饱和冷色玻璃层、可读的深色表格面、移动端堆叠表格和 Sakurairo 全局过渡防护，不再把大段 CSS/JS 内联塞进单个 PHP 文件。
 
 ## 验证状态
 
