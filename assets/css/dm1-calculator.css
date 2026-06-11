@@ -50,6 +50,20 @@
   font-size: 0.94em;
 }
 
+.dm1calc p,
+.dm1calc ul,
+.dm1calc li {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-shadow: none;
+}
+
+.dm1calc p,
+.dm1calc ul {
+  margin-top: 0;
+}
+
 .dm1calc__hero,
 .dm1calc__card,
 .dm1calc__details {
@@ -91,14 +105,14 @@
   line-height: 1.18;
 }
 
-.dm1calc__desc,
-.dm1calc__section-head p,
-.dm1calc__hint,
-.dm1calc__details-body li {
-  color: var(--arcaea-muted);
+.dm1calc.dm1calc .dm1calc__desc,
+.dm1calc.dm1calc .dm1calc__section-head p,
+.dm1calc.dm1calc .dm1calc__hint,
+.dm1calc.dm1calc .dm1calc__details-body li {
+  color: var(--arcaea-muted) !important;
 }
 
-.dm1calc__desc {
+.dm1calc.dm1calc .dm1calc__desc {
   max-width: 72ch;
   margin: 0;
   line-height: 1.72;
@@ -128,7 +142,7 @@
   background: var(--arcaea-bg);
 }
 
-.dm1calc__details summary {
+.dm1calc.dm1calc .dm1calc__details summary {
   cursor: pointer;
   color: var(--arcaea-accent-strong);
   font-weight: 700;
@@ -164,12 +178,12 @@
   line-height: 1.35;
 }
 
-.dm1calc__info-card ul {
+.dm1calc.dm1calc .dm1calc__info-card ul {
   margin: 0;
   padding-left: 18px;
 }
 
-.dm1calc__info-card li {
+.dm1calc.dm1calc .dm1calc__info-card li {
   margin: 0 0 7px;
   line-height: 1.65;
 }
@@ -207,7 +221,7 @@
   margin-bottom: 5px;
 }
 
-.dm1calc__section-head p {
+.dm1calc.dm1calc .dm1calc__section-head p {
   margin: 0;
   line-height: 1.62;
 }
@@ -303,7 +317,7 @@
   box-shadow: none;
 }
 
-.dm1calc__hint {
+.dm1calc.dm1calc .dm1calc__hint {
   margin: 12px 0 0;
   padding: 10px 12px;
   border: 1px solid var(--arcaea-border);
