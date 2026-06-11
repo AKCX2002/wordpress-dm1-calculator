@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/AKCX2002/wordpress-dm1-calculator
  * Update URI: https://github.com/AKCX2002/wordpress-dm1-calculator
  * Description: 仅在浏览器本地计算 J1939 DM1(0xFECA) 单帧/TP.BAM 报文，不发送 CAN 报文、不上传输入数据。支持标准与高低位交换 B3 位域对照，提供短代码 [dm1_calc] 和后台工具页。
- * Version: 0.2.2
+ * Version: 0.2.3
  * Author: Babel36acl
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 final class J1939_DM1_Calculator_Plugin {
     private const SLUG = 'j1939-dm1-calculator';
-    private const VERSION = '0.2.2';
+    private const VERSION = '0.2.3';
 
     public static function init(): void {
         add_shortcode('dm1_calc', [__CLASS__, 'render_shortcode']);
